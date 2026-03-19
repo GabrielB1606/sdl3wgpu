@@ -1,5 +1,0 @@
-[submodule "dawn"]
-	path = vendors/dawn
-	url = https://github.com/google/dawn.git
-	branch = a44d7a3d78f23c680491c0fc04f53a1df62e02ff # Chrome 146
-	shallow = true
