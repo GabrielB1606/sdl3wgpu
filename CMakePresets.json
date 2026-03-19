@@ -1,0 +1,35 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "clang",
+      "displayName": "Clang + Ninja",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DAWN_FORCE_SYSTEM_COMPONENT_LOAD": "ON"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Clang + Ninja (Release)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_BUILD_TYPE": "Release",
+        "DAWN_FORCE_SYSTEM_COMPONENT_LOAD": "ON"
+      }
+    },
+    {
+      "name": "msvc",
+      "displayName": "MSVC (VS 2022)",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build"
+    }
+  ]
+}

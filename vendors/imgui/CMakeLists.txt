@@ -31,4 +31,4 @@ target_sources(
 )
 
 target_compile_definitions(imgui PUBLIC IMGUI_IMPL_WEBGPU_BACKEND_DAWN)
-target_link_libraries(imgui PUBLIC SDL3::SDL3 webgpu_dawn)
+target_link_libraries(imgui PUBLIC webgpu_dawn SDL3::SDL3)
