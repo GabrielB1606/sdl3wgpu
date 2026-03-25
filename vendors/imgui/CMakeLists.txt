@@ -19,7 +19,7 @@ target_include_directories(
 
 target_sources(
   imgui
-  PUBLIC
+  PRIVATE
   ${imgui_SOURCE_DIR}/imgui.cpp
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/imgui_draw.cpp
@@ -27,8 +27,13 @@ target_sources(
   ${imgui_SOURCE_DIR}/imgui_widgets.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_wgpu.cpp
-  # ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp
 )
 
 target_compile_definitions(imgui PUBLIC IMGUI_IMPL_WEBGPU_BACKEND_DAWN)
-target_link_libraries(imgui PUBLIC webgpu_dawn SDL3::SDL3)
+
+if(EMSCRIPTEN)
+  target_compile_options(imgui PUBLIC "${IMGUI_EMSCRIPTEN_WEBGPU_FLAG}")
+  target_link_libraries(imgui PUBLIC SDL3::SDL3)
+else()
+  target_link_libraries(imgui PUBLIC webgpu_dawn SDL3::SDL3)
+endif()
