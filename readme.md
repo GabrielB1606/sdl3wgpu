@@ -2,55 +2,73 @@
 
 This app is a <em>"minimalistic"</em> C++ example that shows how to use [WebGPU](https://gpuweb.github.io/gpuweb/) to build desktop and web apps from a single codebase. Under the hood, it uses WebGPU's [webgpu.h](https://github.com/webgpu-native/webgpu-headers/blob/main/webgpu.h) as a stable and platform-agnostic hardware abstraction layer through a C++ wrapper called [webgpu_cpp.h](https://source.chromium.org/chromium/chromium/src/+/main:third_party/dawn/include/webgpu/webgpu_cpp.h). Note that this wrapper is subject to change.
 
-On the web (not tested yet lol), the app is built against [Emdawnwebgpu](https://dawn.googlesource.com/dawn/+/refs/heads/main/src/emdawnwebgpu/) (Emscripten Dawn WebGPU), which has bindings implementing webgpu.h on top of the JavaScript API. It uses [Emscripten](https://emscripten.org/), a tool for compiling C/C++ programs to WebAssembly. On specific platforms such as macOS or Windows, this project can be built against [Dawn](https://dawn.googlesource.com/dawn/), Chromium's cross-platform WebGPU implementation. While webgpu.h is considered stable, this stability doesn't include extensions added by Emdawnwebgpu or Dawn.
+On the web, the app is built against [Emdawnwebgpu](https://dawn.googlesource.com/dawn/+/refs/heads/main/src/emdawnwebgpu/) (Emscripten Dawn WebGPU), via Emscripten’s `--use-port=emdawnwebgpu`, which implements `webgpu.h` on top of the browser WebGPU API. It uses [Emscripten](https://emscripten.org/) to compile C++ to WebAssembly. On desktop, this project builds against [Dawn](https://dawn.googlesource.com/dawn/) from `vendors/dawn`. While `webgpu.h` is considered stable, that does not cover extensions added by Emdawnwebgpu or Dawn.
+
+Upstream reference for the UI stack: [imgui `example_sdl3_wgpu`](https://github.com/ocornut/imgui/tree/master/examples/example_sdl3_wgpu).
 
 ## Setup
 
 ```sh
-# Clone repository and initialize submodules.
+# Clone repository and initialize submodules (Dawn is required for native builds only).
 git clone https://github.com/GabrielB1606/sdl3wgpu
 cd sdl3wgpu/
 git submodule update --init
 ```
 
 ## Requirements
-- clang (recommended, wgpu might behave funny with g++)
-- cmake
-- enscripten (not necessary for native compilation)
-- one of these APIs:
-    - Vulkan
-    - DirectX 12 (any version should work tho, but it has only been tested in 12)
-    - Metal (not tested)
 
-## Build
+- **Native:** CMake ≥ 3.22, a C++17 compiler (Clang recommended), and a supported GPU backend (Vulkan, D3D12, or Metal).
+- **Web (Emscripten):** [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) **≥ 4.0.15** (required for SDL3 + WebGPU in this setup, same constraint as imgui’s SDL3 example).
+- **Build tool:** [Ninja](https://ninja-build.org/) is recommended (`-G Ninja`). `Unix Makefiles` works if Ninja is not installed.
+
+## Native build
 
 ```sh
-# Build the app with CMake.
 cmake -B build
 cmake --build build -j4
 
-# Run the app (you can change the program name in the src CMakeLists.txt)
+# Run (binary name is `myapp` unless you change it in `src/CMakeLists.txt`)
 ./build/bin/myapp
 ```
 
-## Web build (WIP)
+## Emscripten (web) build
+
+Configure with **`emcmake`** so CMake uses the Emscripten toolchain. Use a **separate build directory** from native builds.
 
 ```sh
-# Build the app with Emscripten.
-emcmake cmake -B build-web
-cmake --build build-web -j4
-
-# Run a server.
-npx http-server
+# From the repository root, with Emscripten on PATH (e.g. after `source emsdk_env.sh`).
+emcmake cmake -G Ninja -B build-em
+cmake --build build-em -j4
 ```
+
+Without Ninja:
 
 ```sh
-# Open the web app.
-open http://127.0.0.1:8080/build-web/app.html
+emcmake cmake -G "Unix Makefiles" -B build-em
+cmake --build build-em -j4
 ```
 
-### Debugging WebAssembly
+### What gets produced
 
-When building the app, compile it with DWARF debug information included thanks to `emcmake cmake -DCMAKE_BUILD_TYPE=Debug -B build-web`. And make sure to install the [C/C++ DevTools Support (DWARF) Chrome extension](https://goo.gle/wasm-debugging-extension) to enable WebAssembly debugging in DevTools.
+- The HTML/JS/WASM output is written under **`build-em/bin/`**.
+- The main page is **`index.html`** (CMake sets `OUTPUT_NAME` to `index` and `CMAKE_EXECUTABLE_SUFFIX` to `.html`).
+- Keep **`index.html`**, **`index.js`**, and **`index.wasm`** (and any other emitted files) in the same directory when serving.
+
+### Run in the browser
+
+You must serve the **`build-em/bin`** folder over **HTTP** (browsers typically block loading `.wasm` from `file://`).
+
+```sh
+emrun --no_browser --port 3000 build-em/bin/index.html
+```
+
+### Debug build (WebAssembly)
+
+```sh
+emcmake cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -B build-em
+cmake --build build-em -j4
+```
+
+For stepping through C++ in Chrome, install the [C/C++ DevTools Support (DWARF) Chrome extension](https://goo.gle/wasm-debugging-extension).
 
 <img width="1112" alt="image" src="https://github.com/beaufortfrancois/webgpu-cross-platform-app/assets/634478/e82f2494-6b1a-4534-b9e3-0c04caeca96d">
