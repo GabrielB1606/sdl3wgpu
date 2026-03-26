@@ -76,6 +76,13 @@ int DebugGUI::init(SDL_Window *window, const float &main_scale,
   // IM_ASSERT(font != nullptr);
 #endif
 
+#ifdef __EMSCRIPTEN__
+  // For an Emscripten build we are disabling file-system access, so let's not
+  // attempt to do a fopen() of the imgui.ini file. You may manually call
+  // LoadIniSettingsFromMemory() to load settings from your own storage.
+  io->IniFilename = nullptr;
+#endif
+
   return 0;
 }
 
@@ -116,8 +123,8 @@ int DebugGUI::draw(WGPUSurfaceTexture surface_texture, const int &width,
     static float f = 0.0f;
     static int counter = 0;
 
-    ImGui::Begin("Hello, world!!!!!!"); // Create a window called "Hello,
-                                        // world!" and append into it.
+    ImGui::Begin("Hello world!"); // Create a window called "Hello,
+                                  // world!" and append into it.
 
     ImGui::Text("This is some useful text."); // Display some text (you can
                                               // use a format strings too)
