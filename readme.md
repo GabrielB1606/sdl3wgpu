@@ -1,4 +1,4 @@
-# WebGPU cross-platform app with CMake/Emscripten (definetly not a copy of [this](https://github.com/beaufortfrancois/webgpu-cross-platform-app/blob/main/README.md?plain=1) with [imgui](https://github.com/ocornut/imgui) and [SDL3](https://github.com/libsdl-org/SDL))
+# WebGPU cross-platform app with CMake/Emscripten (definetly not a copy of [this](https://github.com/beaufortfrancois/webgpu-cross-platform-app) with [imgui](https://github.com/ocornut/imgui) and [SDL3](https://github.com/libsdl-org/SDL))
 
 This app is a <em>"minimalistic"</em> C++ example that shows how to use [WebGPU](https://gpuweb.github.io/gpuweb/) to build desktop and web apps from a single codebase. Under the hood, it uses WebGPU's [webgpu.h](https://github.com/webgpu-native/webgpu-headers/blob/main/webgpu.h) as a stable and platform-agnostic hardware abstraction layer through a C++ wrapper called [webgpu_cpp.h](https://source.chromium.org/chromium/chromium/src/+/main:third_party/dawn/include/webgpu/webgpu_cpp.h). Note that this wrapper is subject to change.
 
