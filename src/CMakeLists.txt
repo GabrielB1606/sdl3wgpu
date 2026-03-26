@@ -6,13 +6,13 @@ target_include_directories(
   PUBLIC
   ../include
 )
-target_link_libraries(
-  myapp
-  PRIVATE
-  imgui
-)
 
 if(EMSCRIPTEN)
+  target_link_libraries(
+    myapp
+    PRIVATE
+    imgui
+  )
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   target_link_options(
     myapp
@@ -28,4 +28,11 @@ if(EMSCRIPTEN)
     "--shell-file=${CMAKE_SOURCE_DIR}/libs/emscripten/shell_minimal.html"
   )
   set_target_properties(myapp PROPERTIES OUTPUT_NAME "index")
+else()
+  target_link_libraries(myapp
+    PRIVATE
+    webgpu_dawn
+    SDL3::SDL3
+    imgui
+  )
 endif()

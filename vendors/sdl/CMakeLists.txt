@@ -7,6 +7,19 @@ if(EMSCRIPTEN)
 else()
   include(FetchContent)
 
+  # SDL sets WINDOWS inside SDL_DetectCMakePlatform(); with FetchContent the probe
+  # block guarded by if(NOT WINDOWS) can still run, writing HAVE_SIGACTION /
+  # HAVE_SYSCONF into the top-level CMake cache. That breaks Windows clang-cl
+  # (incomplete struct sigaction, no unistd.h). Preseed WINDOWS in this scope
+  # so the subdirectory inherits it, and drop stale HAVE_* entries from older
+  # configures.
+  if(WIN32)
+    set(WINDOWS TRUE)
+    unset(HAVE_SIGACTION CACHE)
+    unset(HAVE_SA_SIGACTION CACHE)
+    unset(HAVE_SYSCONF CACHE)
+  endif()
+
   FetchContent_Declare(
     SDL3
     GIT_REPOSITORY https://github.com/libsdl-org/SDL
