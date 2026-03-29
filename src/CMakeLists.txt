@@ -1,6 +1,6 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(myapp debug_gui.cpp main.cpp)
+add_executable(myapp webgpu_core.cpp debug_gui.cpp main.cpp)
 target_include_directories(
   myapp
   PUBLIC
