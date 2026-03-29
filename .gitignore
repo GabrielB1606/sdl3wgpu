@@ -2,3 +2,5 @@ build/
 build*
 .cursorignore
 .cache
+x.cpp
+*.exe
